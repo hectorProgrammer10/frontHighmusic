@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React from "react"
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 
 const Signup = () => {
@@ -10,7 +11,7 @@ const Signup = () => {
         password: "",
     });
     const [error] = useState("");
-    const history = useHistory();
+    const history = useNavigate();
 
     const handleChange = ({ currentTarget: input }) => {
         setData({ ...data, [input.name]: input.value });

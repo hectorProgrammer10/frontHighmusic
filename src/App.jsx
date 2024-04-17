@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeContext, themes } from "./api/Theme";
 import musicDB from "./db/music";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,35 +9,37 @@ import Signup from "./Pages/Singup";
 import Login from "./Pages/Login/Login";
 import Home from "./Pages/Home/Home";
 
-
 const App = () => {
-   
-    const { language } = useSelector(state => state.musicReducer);
+    
+
+    const language = useSelector(state => state.musicReducer.language);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (language === null || language.includes("Español")) {
-            dispatch(setPlaylist(musicDB))
+        const defaultLanguage = "Español";
+        switch (language) {
+            case null:
+            case defaultLanguage.toLowerCase():
+                dispatch(setPlaylist(musicDB));
+                break;
+            case 'ingles':
+                alert("No hay pistas en inglés disponibles");
+                break;
+            default:
+                const filteredPlaylist = musicDB.filter(item => item.lang?.toLowerCase() === language);
+                dispatch(setPlaylist(filteredPlaylist));
         }
-        else if (language.includes('Ingles')) {
-            alert("No hay pistas en ingles disponibles")
-        } else {
-            let x = musicDB.filter((item) => (
-                item.lang && language.includes(item.lang.toLowerCase())
-            ))
-            dispatch(setPlaylist(x))
-        }
-    }, [dispatch, language]);
+    }, [language, dispatch]);
 
     return (
         <ThemeContext.Provider value={themes.light}>
             <Router>
-                <Switch>
-                    <Route path="/" exact component={Login} />
-                    <Route path="/home" component={Home} />
-                    <Route path="/signup" exact component={Signup} />
-                    <Route path="/login2" exact component={Login2} />
-                </Switch>
+                <Routes>
+                    <Route path="/" element={<Login />} exact />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/signup" element={<Signup />} exact />
+                    <Route path="/login2" element={<Login2 />} exact />
+                </Routes>
             </Router>
         </ThemeContext.Provider>
     );
