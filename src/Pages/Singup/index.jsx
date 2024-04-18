@@ -10,7 +10,7 @@ const Signup = () => {
         email: "",
         password: "",
     });
-    const [error] = useState("");
+    const [error, setError] = useState("");
     const history = useNavigate();
 
     const handleChange = ({ currentTarget: input }) => {
@@ -20,15 +20,33 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Simulando el proceso de registro sin comunicación con la base de datos
-        // Aquí podrías realizar validaciones o procesos adicionales según tus necesidades
-        
-        // Simulamos un retraso de 1 segundo para mostrar una acción de registro
-        setTimeout(() => {
-            // Redirigimos al usuario a la página de inicio de sesión después de registrarse
-            history.push("/home"); // Corrección aquí
-            console.log("Usuario registrado exitosamente");
-        }, 1000);
+        try {
+            const response = await fetch('http://localhost:3030/api/V3/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_name: `${data.firstName}_${data.lastName}`,
+                    first_name: data.firstName,
+                    last_name: data.lastName,
+                    email: data.email,
+                    password: data.password,
+                    roles: ["user"]
+                })
+            });
+
+            if (response.ok) {
+                console.log("Usuario registrado exitosamente");
+                // Redirigir al usuario a la página de inicio de sesión o mostrar un mensaje de éxito
+                history.push("/home");
+            } else {
+                throw new Error('Error al registrar usuario');
+            }
+        } catch (error) {
+            setError("Error al registrar usuario. Por favor, inténtelo de nuevo.");
+            console.error(error);
+        }
     };
 
     return (

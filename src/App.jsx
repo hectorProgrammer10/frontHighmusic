@@ -8,10 +8,9 @@ import Login2 from "./Pages/Login2";
 import Signup from "./Pages/Singup";
 import Login from "./Pages/Login/Login";
 import Home from "./Pages/Home/Home";
+import AddMusic from "./components/fragment/AddMusic/AddMusic";
 
 const App = () => {
-    
-
     const language = useSelector(state => state.musicReducer.language);
     const dispatch = useDispatch();
 
@@ -36,7 +35,9 @@ const App = () => {
             <Router>
                 <Routes>
                     <Route path="/" element={<Login />} exact />
-                    <Route path="/home" element={<Home />} />
+                    <Route path="/home/*" element={<Home />}>
+                        <Route path="add" element={<AddMusic />} /> // Ruta para "/home/add"
+                    </Route>
                     <Route path="/signup" element={<Signup />} exact />
                     <Route path="/login2" element={<Login2 />} exact />
                 </Routes>
